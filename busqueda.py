@@ -4,7 +4,7 @@ from typing import List
 
 # ====| C L A S E S |==== #
 class Nodo:
-    # Clase para crear los nodos
+    """Clase para crear los nodos"""
 
     def __init__(self, estado, madre, accion, costo_camino, codigo):
         self.estado = estado
@@ -12,20 +12,6 @@ class Nodo:
         self.accion = accion
         self.costo_camino = costo_camino
         self.codigo = codigo
-
-
-def nodo_hijo(problema, madre: Nodo, accion: int) -> Nodo:
-
-    # Función para crear un nuevo nodo
-    # Input: problema, que es un objeto de clase ocho_reinas
-    #        madre, que es un nodo,
-    #        accion, que es una acción que da lugar al estado del nuevo nodo
-    # Output: nodo
-
-    estado = problema.transicion(madre.estado, accion)
-    costo_camino = madre.costo_camino + problema.costo(madre.estado, accion)
-    codigo = problema.codigo(estado)
-    return Nodo(estado, madre, accion, costo_camino, codigo)
 
 
 class ListaPrioritaria:
@@ -66,10 +52,33 @@ class ListaPrioritaria:
 
 # ====| O T R A S |==== #
 
+# N2
+def solucion(n:Nodo):
+    if n.madre == None:
+        return []
+    else:
+        return solucion(n.madre) + [n.accion]
+
+# N2
+def nodo_hijo(problema, madre: Nodo, accion: int) -> Nodo:
+
+    # Función para crear un nuevo nodo
+    # Input: problema, que es un objeto de clase ocho_reinas
+    #        madre, que es un nodo,
+    #        accion, que es una acción que da lugar al estado del nuevo nodo
+    # Output: nodo
+
+    estado = problema.transicion(madre.estado, accion)
+    costo_camino = madre.costo_camino + problema.costo(madre.estado, accion)
+    codigo = problema.codigo(estado)
+    return Nodo(estado, madre, accion, costo_camino, codigo)
+
+
 # N3
 def depth(nodo: Nodo) -> int:
     if nodo.madre == None:
         return 0
+
     else:
         return depth(nodo.madre) + 1
 
@@ -87,7 +96,7 @@ def is_cycle(nodo: Nodo) -> bool:
         else:
             nodo = nodo.madre
 
-    return False
+    return None
 
 
 # N3
@@ -107,20 +116,27 @@ def EXPAND(problema, nodo: Nodo) -> List[Nodo]:
 # N2
 def depth_first_search(problema):
     nodo = Nodo(problema.estado_inicial, None, None, 0, problema.estado_inicial)
+
     if problema.test_objetivo(nodo.estado):
         return nodo
+
     frontera = [nodo]
     explorados = []
+
     while len(frontera) != 0:
         nodo = frontera.pop()
         explorados.append(nodo.codigo)
+
         for accion in problema.acciones_aplicables(nodo.estado):
             hijo = nodo_hijo(problema, nodo, accion)
+
             if problema.test_objetivo(hijo.estado):
                 return hijo
+
             if hijo.codigo not in explorados:
                 frontera.append(hijo)
-    return False
+
+    return None
 
 
 # N2
@@ -137,31 +153,50 @@ def breadth_first_search(problema):
         explorados.append(nodo.codigo)
         for accion in problema.acciones_aplicables(nodo.estado):
             hijo = nodo_hijo(problema, nodo, accion)
+
             if problema.test_objetivo(hijo.estado):
                 return hijo
+
             if hijo.codigo not in explorados:
                 frontera.append(hijo)
-    return False
+    return None
 
 
 # N3
-def depth_limited_search(problema, l: int) -> str:
+def iterative_deepening_search(problema,l_max:int):
+    for depth in range(l_max):
+        print(f"Buscando en el nivel {depth}")
+        resultado = depth_limited_search(problema,depth)
+        if resultado != 'cutoff':
+            return resultado
+
+
+# N3
+def depth_limited_search(problema, l: int):
     nodo = Nodo(problema.estado_inicial, None, None, 0, problema.estado_inicial)
     frontera = [nodo]
-    resultado = False
+    resultado = None
 
     while len(frontera) != 0:
         nodo = frontera.pop()
+
         if problema.test_objetivo(nodo.estado):
             return nodo
+
         if depth(nodo) >= l:
-            pass
+            resultado = "cutoff"
+
+        elif not is_cycle(nodo):
+            frontera += EXPAND(problema, nodo)
+
+    return resultado
 
 
 # N3
 def best_first_search(problema, f=None):
     if f is not None:
         setattr(problema, "costo", f)
+
     s = problema.estado_inicial
     cod = problema.codigo(s)
 
@@ -170,15 +205,20 @@ def best_first_search(problema, f=None):
     frontera.push(nodo, 0)
     explorados = {}
     explorados[cod] = 0
+
     while not frontera.is_empty():
         nodo = frontera.pop()
+
         if problema.test_objetivo(nodo.estado):
             return nodo
+
         for hijo in EXPAND(problema, nodo):
             s = hijo.estado
             cod = problema.codigo(s)
             c = hijo.costo_camino
+
             if (cod not in explorados.keys()) or (c < explorados[cod]):
                 frontera.push(hijo, c)
                 explorados[cod] = c
+
     return None
