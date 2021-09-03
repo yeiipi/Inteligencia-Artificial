@@ -7,6 +7,37 @@ from time import sleep
 from IPython.display import clear_output
 import chess
 import re
+from abc import ABC, abstractmethod
+
+class Juego(ABC):
+    
+    @abstractmethod
+    def pintar_estado(self, estado):
+        """
+        Dibuja el estado correspondiente 
+        """
+    @abstractmethod
+    def a_jugar(self, board):
+        """Devuelve el jugador a quien corresponde el turno"""
+    
+    @abstractmethod
+    def acciones(self, estado):
+        """Retorna las posibles acciones dependiendo de el estado"""
+        
+        
+    @abstractmethod
+    def resultado(self, estado, indice):
+        """"""
+        
+    @abstractmethod
+    def es_terminal(self, estado):
+        """"""
+        
+    @abstractmethod
+    def utilidad(self, estado, jugador):
+        """"""
+
+
 
 class OchoReinas:
 	'''
@@ -819,7 +850,7 @@ class Rompecabezas:
             		cadena += "-" + str(simbolo)
         return cadena
 
-class Triqui:
+class Triqui(Juego):
 
     def __init__(self):
         self.estado_inicial = np.matrix([[0]*3]*3)
@@ -988,7 +1019,7 @@ class Triqui:
 
         return None
 
-class ReyTorreRey:
+class ReyTorreRey(Juego):
 
     '''
     Usa la librería python-chess
@@ -1075,3 +1106,4 @@ class ReyTorreRey:
         fila = [i for i in range(len(tablero)) if pieza in tablero[i]][0]
         columna = tablero[fila].replace(' ', '').find(pieza)
         return (fila, columna)
+ 
