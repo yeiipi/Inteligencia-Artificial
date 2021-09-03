@@ -1,6 +1,6 @@
 # ====| S E T U P |==== #
 import numpy as np
-from typing import List
+from typing import List, Tuple
 
 # ====| C L A S E S |==== #
 class Nodo:
@@ -52,15 +52,9 @@ class ListaPrioritaria:
 
 # ====| O T R A S |==== #
 
-# N2
-def solucion(n:Nodo):
-    if n.madre == None:
-        return []
-    else:
-        return solucion(n.madre) + [n.accion]
 
-# N2
-def nodo_hijo(problema, madre: Nodo, accion: int) -> Nodo:
+# N3
+def nodo_hijo(problema, madre, accion):
 
     # Función para crear un nuevo nodo
     # Input: problema, que es un objeto de clase ocho_reinas
@@ -69,9 +63,26 @@ def nodo_hijo(problema, madre: Nodo, accion: int) -> Nodo:
     # Output: nodo
 
     estado = problema.transicion(madre.estado, accion)
-    costo_camino = madre.costo_camino + problema.costo(madre.estado, accion)
+    try:
+        costo_camino = madre.costo_camino + problema.costo(
+            estado=madre.estado, accion=accion
+        )
+    except TypeError as e:
+        costo_camino = madre.costo_camino + problema.costo(
+            self=problema, estado=madre.estado, accion=accion
+        )
+        # raise e
+
     codigo = problema.codigo(estado)
     return Nodo(estado, madre, accion, costo_camino, codigo)
+
+
+# N3
+def solucion(n):
+    if n.madre == None:
+        return []
+    else:
+        return solucion(n.madre) + [n.accion]
 
 
 # N3
@@ -109,6 +120,27 @@ def EXPAND(problema, nodo: Nodo) -> List[Nodo]:
         nodos.append(hijo)
 
     return nodos
+
+
+# N3
+def cod_lab(cod: str) -> tuple:
+    try:
+        temp = cod.split("-")
+        return tuple([int(c) for c in temp])
+    except AttributeError:
+        return cod
+
+
+# N3
+def lab_states(nodo: Nodo) -> List[Tuple[int, int]]:
+    estados = list()
+    while True:
+        if nodo is None:
+            break
+        estados = [cod_lab(nodo.codigo)] + estados
+        nodo = nodo.madre
+
+    return estados
 
 
 # ====| B U S Q U E D A |==== #
@@ -163,15 +195,6 @@ def breadth_first_search(problema):
 
 
 # N3
-def iterative_deepening_search(problema,l_max:int):
-    for depth in range(l_max):
-        print(f"Buscando en el nivel {depth}")
-        resultado = depth_limited_search(problema,depth)
-        if resultado != 'cutoff':
-            return resultado
-
-
-# N3
 def depth_limited_search(problema, l: int):
     nodo = Nodo(problema.estado_inicial, None, None, 0, problema.estado_inicial)
     frontera = [nodo]
@@ -193,10 +216,20 @@ def depth_limited_search(problema, l: int):
 
 
 # N3
+def iterative_deepening_search(problema, l_max: int):
+    for depth in range(l_max):
+        print(f"Buscando en el nivel {depth}")
+        resultado = depth_limited_search(problema, depth)
+        if resultado != "cutoff":
+            return resultado
+
+
+# N3
 def best_first_search(problema, f=None):
     if f is not None:
         setattr(problema, "costo", f)
 
+    print("niso second round")
     s = problema.estado_inicial
     cod = problema.codigo(s)
 

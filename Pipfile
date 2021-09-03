@@ -8,6 +8,9 @@ jupyterlab = "*"
 matplotlib = "*"
 numpy = "*"
 black = "*"
+python-chess = "*"
+nodejs = "*"
+theme-darcula = "*"
 
 [dev-packages]
 black = "*"
