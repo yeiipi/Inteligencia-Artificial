@@ -229,7 +229,6 @@ def best_first_search(problema, f=None):
     if f is not None:
         setattr(problema, "costo", f)
 
-    print("niso second round")
     s = problema.estado_inicial
     cod = problema.codigo(s)
 
@@ -255,3 +254,31 @@ def best_first_search(problema, f=None):
                 explorados[cod] = c
 
     return None
+
+# N5
+def minimax_search(juego:Juego, estado):
+    jugador = juego.a_jugar(estado)
+    valor, movimiento = max_value(juego,estado, jugador)
+    return movimiento
+
+# N5
+def max_value(juego:Juego, estado,jugador):
+    if juego.es_terminal(estado):
+        return (juego.utilidad(estado,jugador),None)
+    v = -inf
+    for a in juego.acciones(estado):
+        v2,va = min_value(juego,juego.resultado(estado,a),jugador)
+        if v2 > v:
+            v,movimiento = v2,a
+    return (v,movimiento)
+
+# N5
+def min_value(juego:Juego, estado, jugador):
+    if juego.es_terminal(estado):
+        return (juego.utilidad(estado,jugador), None)
+    v = inf
+    for a in juego.acciones(estado):
+        v2,a2 = max_value(juego,juego.resultado(estado,a), jugador)
+        if v2 < v:
+            v,movimiento = v2,a
+    return v, movimiento
