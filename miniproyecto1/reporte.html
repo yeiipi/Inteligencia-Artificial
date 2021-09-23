@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2021-09-22 mié 19:40 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Solución al problema de Criptoaritmética</title>
+<meta name="author" content="Alejandra Campo Archbold, Juan Pablo Sierra Useche" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+</style>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Solución al problema de Criptoaritmética</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orga629f5f">1. Introducción</a></li>
+<li><a href="#orgccf51ae">2. Métodos</a>
+<ul>
+<li><a href="#orge691f69">2.1. Estado Inicial</a></li>
+<li><a href="#orga076999">2.2. Posibles Acciones</a></li>
+<li><a href="#orgdc459c4">2.3. Función de Transición</a></li>
+<li><a href="#org88024bc">2.4. Prueba de objetivo</a></li>
+<li><a href="#org2e1a26d">2.5. Función de costo</a></li>
+<li><a href="#org83674a0">2.6. Algoritmos de busqueda</a></li>
+</ul>
+</li>
+<li><a href="#org4c18c7e">3. Resultados</a></li>
+<li><a href="#org17ab023">4. Discución</a></li>
+<li><a href="#org5640746">5. Conclusiones</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orga629f5f" class="outline-2">
+<h2 id="orga629f5f"><span class="section-number-2">1.</span> Introducción</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+La criptoaritmética es un problema que se deriva de la criptología; aunque a
+diferencia de la criptología, que busca implementar sistemas seguros, la
+criptoaritmética tiene un caracter más de entretenimiento.
+</p>
+
+<p>
+Este ejercicio tiene tres componentes principales:
+</p>
+
+<ul class="org-ul">
+<li>Dos sumandos</li>
+<li>Un resultado</li>
+</ul>
+
+<p>
+Como cualquer suma, esta operación binaria toma dos elementos y al sumar sus
+valores obtiene uno representativo como la suma de los dos. A diferencia de una
+suma convencional, en la criptoaritmetica se inicia con las tres componentes  en
+forma de letras tal que cada caracter \((A_i,B_j,C_k \in \left\{ A,B,C,\dots,X,Y,Z
+\right\}\) para
+todo \(i \in \left\{ 1,\dots,m \right\} \), \( j\in
+\left\{1,\dots,n\right\} \) y  \( k\in \left\{1,\dots,o\right\} \)de la forma:
+</p>
+
+\begin{align*}
+\begin{matrix}
+&A_m&A_{m-1}&\dots&A_2&A_1\\
++&B_n&B_{n-1}&\dots&B_2&B_1\\
+\hline
+&C_o&C_{o-1}&\dots&C_2&C_1\\
+\end{matrix}
+\end{align*}
+
+<p>
+Las tres componentes no deben ser de igual tamaño, es decir (teniendo en cuenta
+la notación de la ecuación anterior) \(m\), \(n\) y \(o\) no deben ser iguales;
+pero deben cumplir tres reglas:
+</p>
+
+<ol class="org-ol">
+<li>\(A_i + B_i = C_i\)</li>
+<li>Si \(A_i + B_i \ne C_i\) existen 3 posibilidades:
+<ul class="org-ul">
+<li>Si \(A_i + B_i >= 10\) entonces \(A_i + B_i = 10 + C_i\)</li>
+<li>Si \(A_i + B_i < 10\) entonces \(A_{i-1} + B_{i-1} = 10 + C_{i-1}\)</li>
+<li>Si \(A_i + B_i >= 10\) y \(A_{i-1} + B_{i-1} >= 10\) entonces \(A_i + B_i = 10 + C_i\) y \(A_{i-1} + B_{i-1} = 10 + C_{i-1}\).</li>
+</ul></li>
+<li>Dos letras distintas no puedes ser asignadas a un mismo número.</li>
+</ol>
+
+<p>
+Ahora, teniendo estas reglas como base, la finalidad del problema es encontrar
+una combinación donde todas las reglas se cumplan. Un ejemplo posible sería el siguiente:
+</p>
+
+\begin{align*}
+\begin{matrix}
+ &A_2&A_1\\
++&B_2&B_1\\ \hline
+ &C_2&C_1\\
+\end{matrix}
+\to
+\begin{matrix}
+ &A&B\\
++&C&D\\ \hline
+ &E&F\\
+\end{matrix}
+\to
+\begin{matrix}
+ &3&2\\
++&5&7\\ \hline
+ &8&9\\
+\end{matrix}
+\end{align*}
+</div>
+</div>
+
+
+<div id="outline-container-orgccf51ae" class="outline-2">
+<h2 id="orgccf51ae"><span class="section-number-2">2.</span> Métodos</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Con la finalidad de encontrar una forma para calcular las soluciones a este
+problema, a conticuación, se van a explicar las dinamicas del ejercicio de foma
+más rigurosa:
+</p>
+</div>
+
+<div id="outline-container-orge691f69" class="outline-3">
+<h3 id="orge691f69"><span class="section-number-3">2.1.</span> Estado Inicial</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+El estado inicial del problema consite del las tres componentes (ya descritas en
+la introducción) como conjunto de caracteres entre la \(A\) y la \(Z\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga076999" class="outline-3">
+<h3 id="orga076999"><span class="section-number-3">2.2.</span> Posibles Acciones</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Las posibles acciones se definen como una función del conjunto de letras
+(aquellas que conforman a las tres componentes) a las que no se les ha asignado
+un valor numérico apuntando al conjunto de números naturales en el intervalo
+\(\left[0-9\right]\) que aún no han sido asignados a una letra.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdc459c4" class="outline-3">
+<h3 id="orgdc459c4"><span class="section-number-3">2.3.</span> Función de Transición</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Esta función retorna un estado del problema, donde se le a agregado la nueva
+asignación letra\(\to\)número y a los conjuntos de letras y números disponibles
+se les extrae los valores respectivos a la relación recien formada.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org88024bc" class="outline-3">
+<h3 id="org88024bc"><span class="section-number-3">2.4.</span> Prueba de objetivo</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+Esta función determina si el estado actual cumple la relación entre los dos sumandos y el resultado.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2e1a26d" class="outline-3">
+<h3 id="org2e1a26d"><span class="section-number-3">2.5.</span> Función de costo</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+La función de costo está orientada a la implementación de una lista prioritaria,
+donde se calcula el costo dependiendo de la frecuencia de cada una de las letras
+que faltan por reemplazar, entre más frecuente menor es el costo (es decir más
+prioritario segun lista prioritaria).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org83674a0" class="outline-3">
+<h3 id="org83674a0"><span class="section-number-3">2.6.</span> Algoritmos de busqueda</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+Vale la pena recalcar que el diseño del problema se implementó en formato nodal
+(al igual que en clase), Por lo que el problema funciona con los algoritmos ya
+programados desde la clase. Por lo tanto decidimos hacer pruebas utilizando los
+siguientes algoritmos de busqueda:
+</p>
+
+<ul class="org-ul">
+<li><b><b>Depth First Search (DFS)</b></b>: El DFS es un algoritmo que funciona en arboles, y funciona recorriendo de un extremo al otro del arbol, buscando siempre analizar el nodo más profundo.</li>
+<li><b><b>Breadth First Search (BFS)</b></b>: El algoritmo tambien hace un barrido de un lado al otro de un arbol, pero a diferencia del DFS, el BFS le da como privilegio a los niveles del arbol, por lo que revisa todos los nodos de cada nivel antes de bajar al siguiente.</li>
+<li><b><b>Depth Limited Search (DLS)</b></b>: Este algoritmo funciona de la misma forma que el <b>Depth First Search</b>, pero estableciendo un límite de profundidad.</li>
+<li><b><b>Iterative Deepening Search (IDS)</b></b>: Este algoritmo es la combinación de los dos anteriores, buscando repetidamente hasta cierta profundidad por todo el nivel.</li>
+<li><b><b>Best First Search (BestFS)</b></b>: Con este algoritmo se busca el nodo según la lista prioritaria lo determine.</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4c18c7e" class="outline-2">
+<h2 id="org4c18c7e"><span class="section-number-2">3.</span> Resultados</h2>
+<div class="outline-text-2" id="text-3">
+<ul class="org-ul">
+<li><b><b>Prueba 1</b></b>: Resolver problemas con sumandos y resultados de igual tamaño (igual a dos) y seis letras diferentes.</li>
+<li><b><b>Prueba 2</b></b>: Resolver <code>SEND + MORE = MONEY</code>.</li>
+</ul>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right"><b><b>Prueba</b></b></th>
+<th scope="col" class="org-left"><b><b>Algoritmo</b></b></th>
+<th scope="col" class="org-left"><b><b>Resultados</b></b></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">DFS</td>
+<td class="org-left">Promedio de <code>7 ms</code>.</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">BFS</td>
+<td class="org-left">Nunca nos entregó resultados.</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">DLS</td>
+<td class="org-left">Promedio de <code>9.80 ms</code>.</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">IDS</td>
+<td class="org-left">Promedio de <code>23.7 s</code>.</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">BestFS</td>
+<td class="org-left">Promedio de <code>1 min</code>.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">DFS</td>
+<td class="org-left">Promedio de <code>886 ms</code>.</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">BFS</td>
+<td class="org-left">Nunca nos entregó resultados.</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">DLS</td>
+<td class="org-left">Promedio de <code>298 ms</code>.</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">IDS</td>
+<td class="org-left">Promedio de <code>11 mins</code>.</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">BestFS</td>
+<td class="org-left">Nunca nos entregó resultados.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-org17ab023" class="outline-2">
+<h2 id="org17ab023"><span class="section-number-2">4.</span> Discución</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+El algoritmo de <b><b>BFS</b></b> tuvo problemas de tiempo, y hay dos hipótesis:
+</p>
+
+<ol class="org-ol">
+<li>Se cree que el problema está relacionado con la definición de prioridad, implicando que no encontramós la mejor de las formas para medir el problema.</li>
+<li>Se cree que el problema se vincula con el mismo rendimiento de la función de costo, agregando demasiada complejidad al problema.</li>
+</ol>
+
+<p>
+Dejando abierta la mejor forma de solucionar el problema, pero entregando buenas soluciones con algoritmos más simples.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5640746" class="outline-2">
+<h2 id="org5640746"><span class="section-number-2">5.</span> Conclusiones</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+Con problemas más simples, funciona mejor el DFS ya que el algoritmo es bastante
+simple y es justo para lo que necesita el problema. Pero cuando la complejidad
+del estado inicial va aumentando, el DLS resulta con mucho mejores promedios ya
+que administra mejor la busqueda, asumiendo la cantidad de letras y así dejando
+de intentar soluciones cuando estas se vuelven muy largas.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Alejandra Campo Archbold, Juan Pablo Sierra Useche</p>
+<p class="date">Created: 2021-09-22 mié 19:40</p>
+</div>
+</body>
+</html>

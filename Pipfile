@@ -11,6 +11,7 @@ black = "*"
 python-chess = "*"
 nodejs = "*"
 theme-darcula = "*"
+ipython = "*"
 
 [dev-packages]
 black = "*"
